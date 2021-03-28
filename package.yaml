@@ -1,14 +1,14 @@
-name:                tic-tac-toe-hs
-version:             0.1.0.0
-github:              "githubuser/tic-tac-toe-hs"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2021 Author name here"
+name: tic-tac-toe-hs
+version: 0.1.0.0
+github: "githubuser/tic-tac-toe-hs"
+license: BSD3
+author: "Author name here"
+maintainer: "example@example.com"
+copyright: "2021 Author name here"
 
 extra-source-files:
-- README.md
-- ChangeLog.md
+  - README.md
+  - ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -17,32 +17,33 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/tic-tac-toe-hs#readme>
+description: Please see the README on GitHub at <https://github.com/githubuser/tic-tac-toe-hs#readme>
 
 dependencies:
-- base >= 4.7 && < 5
+  - base >= 4.7 && < 5
+  - vector
 
 library:
   source-dirs: src
 
 executables:
   tic-tac-toe-hs-exe:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs: app
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
     dependencies:
-    - tic-tac-toe-hs
+      - tic-tac-toe-hs
 
 tests:
   tic-tac-toe-hs-test:
-    main:                Spec.hs
-    source-dirs:         test
+    main: Spec.hs
+    source-dirs: test
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
     dependencies:
-    - tic-tac-toe-hs
+      - tic-tac-toe-hs

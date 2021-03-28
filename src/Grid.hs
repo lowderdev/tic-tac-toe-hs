@@ -2,6 +2,8 @@ module Grid where
 
 import Cell
 
+-- investigate Vector or containers? as alternative to this
+
 data Grid a = Grid
   { one :: a,
     two :: a,
@@ -52,6 +54,19 @@ printGrid grid =
     h = eight grid'
     i = nine grid'
 
+getCell :: String -> Grid Cell -> Cell
+getCell cellNum grid =
+  case cellNum of
+    "1" -> one grid
+    "2" -> two grid
+    "3" -> three grid
+    "4" -> four grid
+    "5" -> five grid
+    "6" -> six grid
+    "7" -> seven grid
+    "8" -> eight grid
+    "9" -> nine grid
+
 updateGrid :: Grid Cell -> Cell -> String -> Grid Cell
 updateGrid g cell cellNum =
   case cellNum of
@@ -64,3 +79,32 @@ updateGrid g cell cellNum =
     "7" -> Grid (one g) (two g) (three g) (four g) (five g) (six g) cell (eight g) (nine g)
     "8" -> Grid (one g) (two g) (three g) (four g) (five g) (six g) (seven g) cell (nine g)
     "9" -> Grid (one g) (two g) (three g) (four g) (five g) (six g) (seven g) (eight g) cell
+
+detectTie :: Grid Cell -> Bool
+detectTie (Grid a b c d e f g h i) =
+  Empty `notElem` [a, b, c, d, e, f, g, h, i]
+
+-- Refactor to the following?
+-- detectWin (Grid a b c d e f g h i)
+--   | a /= Empty && a == b && a == c = Just a
+--   | d /= Empty -- and so on
+detectWin :: Grid Cell -> Maybe Cell
+detectWin grid =
+  case grid of
+    Grid X X X _ _ _ _ _ _ -> Just X
+    Grid _ _ _ X X X _ _ _ -> Just X
+    Grid _ _ _ _ _ _ X X X -> Just X
+    Grid X _ _ X _ _ X _ _ -> Just X
+    Grid _ X _ _ X _ _ X _ -> Just X
+    Grid _ _ X _ _ X _ _ X -> Just X
+    Grid X _ _ _ X _ _ _ X -> Just X
+    Grid _ _ X _ X _ X _ _ -> Just X
+    Grid O O O _ _ _ _ _ _ -> Just O
+    Grid _ _ _ O O O _ _ _ -> Just O
+    Grid _ _ _ _ _ _ O O O -> Just O
+    Grid O _ _ O _ _ O _ _ -> Just O
+    Grid _ O _ _ O _ _ O _ -> Just O
+    Grid _ _ O _ _ O _ _ O -> Just O
+    Grid O _ _ _ O _ _ _ O -> Just O
+    Grid _ _ O _ O _ O _ _ -> Just O
+    _ -> Nothing

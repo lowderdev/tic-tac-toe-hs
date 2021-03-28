@@ -29,11 +29,7 @@ stack ghci
 :main
 ```
 
-To exit, just... ctrl + c 😬
-
 **TODO**:
 
-* detect win/tie state and exit
-* don't allow cells to be overwritten
 * UI?
 * "AI" / 1 player mode?
