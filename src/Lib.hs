@@ -11,6 +11,7 @@ run = runGame blankGrid X
 
 runGame :: Grid Cell -> Cell -> IO ()
 runGame grid cell = do
+  putStrLn $ show cell ++ "'s turn"
   printGrid grid
   printInstruction
   move <- getLine
@@ -34,7 +35,7 @@ validateMove grid move
   | getCell move grid /= Empty = invalidMoveError
   | otherwise = Right move
   where
-    invalidMoveError = Left "Invalid move, please enter number 1-9"
+    invalidMoveError = Left "Invalid move"
 
 nextCell :: Cell -> Cell
 nextCell X = O
