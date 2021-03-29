@@ -11,31 +11,37 @@ run = runGame blankGrid X
 
 runGame :: Grid Cell -> Cell -> IO ()
 runGame grid cell = do
-  putStrLn $ show cell ++ "'s turn"
   printGrid grid
+  printTurn cell
   printInstruction
-  move <- getLine
-  case validateMove grid move of
-    Left result -> putStrLn result >> runGame grid cell
-    Right result ->
-      let newGrid = updateGrid grid cell move
-          go (Just cell) = putStrLn (show cell ++ " Wins!") >> printGrid newGrid
-          go Nothing =
-            if detectTie newGrid
-              then putStrLn "Tie Game!" >> printGrid newGrid
-              else runGame newGrid (nextCell cell)
-       in go $ detectWin newGrid
+  cellNum <- getLine
+  handleMove grid cell cellNum
+
+handleMove :: Grid Cell -> Cell -> String -> IO ()
+handleMove grid cell cellNum =
+  if validateMove grid cellNum
+    then detectEndState grid cell cellNum
+    else putStrLn "Invalid Move" >> runGame grid cell
+
+detectEndState :: Grid Cell -> Cell -> String -> IO ()
+detectEndState grid cell cellNum
+  | detectWin nextGrid = putStrLn (show cell ++ " Wins!") >> printGrid nextGrid
+  | detectTie nextGrid = putStrLn "Tie Game!" >> printGrid nextGrid
+  | otherwise = runGame nextGrid (nextCell cell)
+  where
+    nextGrid = putCell cellNum cell grid
+
+printTurn :: Cell -> IO ()
+printTurn cell = putStrLn $ show cell ++ "'s turn"
 
 printInstruction :: IO ()
 printInstruction = putStrLn "Enter number 1-9" *> putStrLn ""
 
-validateMove :: Grid Cell -> String -> Either String String
-validateMove grid move
-  | move `notElem` map show [1 .. 9] = invalidMoveError
-  | getCell move grid /= Empty = invalidMoveError
-  | otherwise = Right move
+validateMove :: Grid Cell -> String -> Bool
+validateMove grid cellNum = invalidCellNum && cellTaken
   where
-    invalidMoveError = Left "Invalid move"
+    invalidCellNum = cellNum `notElem` map show [1 .. 9]
+    cellTaken = getCell cellNum grid /= Empty
 
 nextCell :: Cell -> Cell
 nextCell X = O
