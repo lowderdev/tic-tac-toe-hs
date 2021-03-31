@@ -13,36 +13,36 @@ runGame :: Grid Cell -> Cell -> IO ()
 runGame grid cell = do
   printGrid grid
   printTurn cell
-  printInstruction
+  printMovePrompt
   cellNum <- getLine
-  handleMove grid cell cellNum
-
-handleMove :: Grid Cell -> Cell -> String -> IO ()
-handleMove grid cell cellNum =
-  if validateMove grid cellNum
-    then detectEndState grid cell cellNum
-    else putStrLn "Invalid Move" >> runGame grid cell
-
-detectEndState :: Grid Cell -> Cell -> String -> IO ()
-detectEndState grid cell cellNum
-  | detectWin nextGrid = putStrLn (show cell ++ " Wins!") >> printGrid nextGrid
-  | detectTie nextGrid = putStrLn "Tie Game!" >> printGrid nextGrid
-  | otherwise = runGame nextGrid (nextCell cell)
-  where
-    nextGrid = putCell cellNum cell grid
+  updateGrid grid cell $ validateMove grid cell cellNum
 
 printTurn :: Cell -> IO ()
 printTurn cell = putStrLn $ show cell ++ "'s turn"
 
-printInstruction :: IO ()
-printInstruction = putStrLn "Enter number 1-9" *> putStrLn ""
+printMovePrompt :: IO ()
+printMovePrompt = putStr "Enter number 1-9: "
 
-validateMove :: Grid Cell -> String -> Bool
-validateMove grid cellNum = invalidCellNum && cellTaken
+validateMove :: Grid Cell -> Cell -> String -> Either String String
+validateMove grid cell cellNum
+  | invalidCellNum = Left "Move is not a num 1-9"
+  | cellTaken = Left "Cell is already taken"
+  | otherwise = Right cellNum
   where
     invalidCellNum = cellNum `notElem` map show [1 .. 9]
     cellTaken = getCell cellNum grid /= Empty
 
-nextCell :: Cell -> Cell
-nextCell X = O
-nextCell O = X
+updateGrid :: Grid Cell -> Cell -> Either String String -> IO ()
+updateGrid grid cell (Left error) = putStrLn error >> runGame grid cell
+updateGrid grid cell (Right cellNum)
+  | detectWin nextGrid = printGrid nextGrid >> printWinMessage cell
+  | detectTie nextGrid = printGrid nextGrid >> printTieMessage
+  | otherwise = runGame nextGrid (nextCell cell)
+  where
+    nextGrid = putCell cellNum cell grid
+
+printWinMessage :: Cell -> IO ()
+printWinMessage cell = putStrLn $ concat ["===== ", show cell, " Wins!", " ====="]
+
+printTieMessage :: IO ()
+printTieMessage = putStrLn "===== Tie Game! ====="

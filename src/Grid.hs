@@ -11,7 +11,7 @@ where
 
 import Cell
 
--- investigate Vector or containers? as alternative to this
+-- investigate Vector or containers as alternative to this?
 --  a | b | c
 -- ---+---+---
 --  d | e | f
@@ -61,12 +61,12 @@ toRows (Grid a b c d e f g h i) = [row1, row2, row3, col1, col2, col3, aiDiagona
 printGrid :: Show a => Grid a -> IO ()
 printGrid grid =
   putStrLn ""
-    *> putStrLn (" " ++ a ++ " | " ++ b ++ " | " ++ c ++ " ")
-    *> putStrLn "---+---+---"
-    *> putStrLn (concat [" ", d, " | ", e, " | ", f, " "])
-    *> putStrLn "---+---+---"
-    *> putStrLn (" " ++ g ++ " | " ++ h ++ " | " ++ i ++ " ")
-    *> putStrLn ""
+    >> putStrLn (concat [" ", a, " | ", b, " | ", c, " "])
+    >> putStrLn "---+---+---"
+    >> putStrLn (concat [" ", d, " | ", e, " | ", f, " "])
+    >> putStrLn "---+---+---"
+    >> putStrLn (concat [" ", g, " | ", h, " | ", i, " "])
+    >> putStrLn ""
   where
     Grid a b c d e f g h i = show <$> grid
 
@@ -97,17 +97,7 @@ putCell cellNum x (Grid a b c d e f g h i) =
     "9" -> Grid a b c d e f g h x
 
 detectWin :: Grid Cell -> Bool
-detectWin (Grid a b c d e f g h i) =
-  any checkThreeInARow [row1, row2, row3, col1, col2, col3, aiDiagonal, cgDiagonal]
-  where
-    row1 = (a, b, c)
-    row2 = (d, e, f)
-    row3 = (g, h, i)
-    col1 = (a, d, g)
-    col2 = (b, e, h)
-    col3 = (c, f, i)
-    aiDiagonal = (a, e, i)
-    cgDiagonal = (c, e, g)
+detectWin = any checkThreeInARow . toRows
 
 detectTie :: Grid Cell -> Bool
 detectTie (Grid a b c d e f g h i) =
